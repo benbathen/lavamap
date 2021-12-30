@@ -1,0 +1,43 @@
+Hi Ben, it was great meeting with you today. I'd like to extend a three.js assessment as the next part of the interview process:
+
+Test instructions
+
+
+Thank you for taking the time to complete this test, if you have any questions please contact mike@lavamap.com. When complete please provide a readme and the source code in github or a google drive and share with us.
+
+
+Layout
+
+There should be a main 3d canvas and a panel to the side or bottom. The panel lets you add objects to the scene and modify them.
+
+
+Canvas
+
+There should be a grid to show the orientation of the camera and somewhere to place the objects on to.
+
+
+Camera controls
+
+The camera should be looking down into the scene (like a floorplan) and can be controlled with the mouse:
+
+The user should be able to left click and drag to translate the camera up, down, left and right.
+
+The user should be able to right click and drag to rotate the camera.
+
+The scroll wheel should zoom the view in and out.
+
+
+Add Objects
+
+The panel should contain a dropdown that lists some options to create colored primitives (blue box, red cylinder, etc.)
+
+The object should then be created where the user clicks on the grid.
+
+The panel should have buttons to translate the object as well as rotate it (45 degrees) Note: the translate buttons should always move the objects relative to the screen. For example the up button should move the object toward the top of the screen even after the camera has been rotated. 
+
+There should be a remove button to remove the current object, thus making the previously created object the new current object.
+
+There should be a remove all button to remove all the objects from the scene.
+
+
+Please pay close attention to scene hierarchy and application structure.

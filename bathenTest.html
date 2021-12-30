@@ -1,0 +1,48 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Ben Bathen Three.js Test</title>
+    <meta name="description" content="Ben Bathen Three.js Test">
+    <meta name="author" content="Ben Bathen">
+
+    <meta property="og:title" content="Ben Bathen Three.js Test">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.sitepoint.com/a-basic-html5-template/">
+    <meta property="og:description" content="Ben Bathen Three.js Test">
+    <meta property="og:image" content="image.png">
+
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="./bathenTest.css">
+</head>
+
+<body oncontextmenu="return false;">
+    <div class="flex-container">
+        <div class="grid-container">
+            <select id="typeDropdown" class="dropDown">
+                <option value="redCylinder">Red Cylinder</option>
+                <option value="blueBox">Blue Cube</option>
+                <option value="yellowCone">Yellow Cone</option>
+            </select>
+            <button class="btn" onclick="removeAll()">REMOVE ALL</button>
+            <button class="btn" onclick="removeSelected()">REMOVE SELECTED</button>
+
+            <input type="image" src="images/translate.jpg" class="btn" onclick="removeAll()"></button>
+            <input type="image" src="images/rotate.jpg" class="btn" onclick="removeSelected()"></button>
+        </div>
+        <!–– Canvas element gets appended here -->
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.101.1/examples/js/controls/OrbitControls.js"></script>
+    <script src="bathenTest.js"></script>
+</body>
+
+</html>
