@@ -1,3 +1,7 @@
+body{
+  background-color: #aaa;
+}
+
 .flex-container {
     display: flex;
     align-items: stretch;
@@ -20,6 +24,7 @@
     padding: 5px;
     flex-grow: 2;
     height: 70vh;
+    border: 2px solid #fe2658;
   }
 
   .item1 {

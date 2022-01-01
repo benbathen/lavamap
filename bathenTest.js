@@ -1,7 +1,5 @@
 
 
-
-
 let currentObject = null;
 const mouseDownPos = new THREE.Vector2(0, 0);
 let isMouseDown = false;
@@ -12,7 +10,8 @@ camera.position.set(0, 24, 0);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 const coloredMeshes = new Array();
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ alpha: true });
+scene.background = new THREE.Color( 0x384C55 );
 document.getElementsByClassName("flex-container")[0].appendChild(renderer.domElement);
 
 const raycaster = new THREE.Raycaster();
@@ -24,10 +23,10 @@ function addEventListeners() {
     document.addEventListener('mouseup', onMouseUp);
     document.addEventListener('keydown', handleKey);
     document.getElementById("translateBtn").addEventListener('click', translate);
-    document.getElementById("up").addEventListener('click', up);
-    document.getElementById("down").addEventListener('click', down);
-    document.getElementById("left").addEventListener('click', left);
-    document.getElementById("right").addEventListener('click', right);
+    document.getElementById("up").addEventListener('click', move);
+    document.getElementById("down").addEventListener('click', move);
+    document.getElementById("left").addEventListener('click', move);
+    document.getElementById("right").addEventListener('click', move);
     document.getElementById("rotateForwardBtn").addEventListener('click', rotate);
     document.getElementById("rotateBackBtn").addEventListener('click', rotate);
 }
@@ -38,8 +37,8 @@ function handleKey(event) {
         case 'Delete':
             removeSelected();
             break;
-        case 'F':
-            if (currentObject) {
+        case 'KeyF':
+            if (currentObject !== undefined) {
                 const targetPos = new THREE.Vector3();
                 currentObject.getWorldPosition(targetPos);
                 targetPos.y += 5;
@@ -47,12 +46,14 @@ function handleKey(event) {
                 camera.lookAt(currentObject.position);
             }
             break;
-        default:
-            console.log("pressed " + event.code);
+        case 'KeyA':
 
+            camera.position.set(0, 24, 0);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            break;
+        default:
     }
 }
-
 
 const size = 24;
 const divisions = 24;
@@ -126,7 +127,7 @@ function createObject(objectType, intersectPoint) {
             cone.position.copy(intersectPoint);
             return cone;
         default:
-            console.log('invalid geometry type');
+            console.warn(objectType.value + ' is not a valid geometry type');
     }
 }
 
@@ -141,7 +142,7 @@ function getAxisToObject() {
 function translate() {
     if (currentObject !== undefined) {
         const objects = [currentObject];
-        const dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
+        const dragControls = new THREE.DragControls(coloredMeshes, camera, renderer.domElement);
         document.body.style.cursor = 'move';
         dragControls.addEventListener('dragstart', (event) => {
             event.object.material.emissive.set(0x00FF00);
@@ -156,73 +157,43 @@ function translate() {
     }
 }
 
-function up() {
+function move(event) {
+    let axis = "x"
+    switch (event.target.id) {
+        case "up":
+            axis = 'y';
+            value = 1;
+            break;
+        case "down":
+            axis = 'y';
+            value = -1;
+            break;
+        case "left":
+            axis = 'x';
+            value = -1;
+            break;
+        case "right":
+            axis = 'x';
+            value = 1;
+            break;
+        default:
+            break;
+
+    }
     const cameraWorldPosition = new THREE.Vector3();
     camera.getWorldPosition(cameraWorldPosition);
-
     geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
     material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
     let cube = new THREE.Mesh(geometry, material);
     camera.add(cube);
-
-    cube.position.y += 1;
-
+    cube.position[axis] += 1;
     const upCameraWorldPosition = new THREE.Vector3();
     cube.getWorldPosition(upCameraWorldPosition);
     upCameraWorldPosition.sub(cameraWorldPosition);
-    currentObject.translateOnAxis(upCameraWorldPosition, 1);
+    currentObject.position.add(upCameraWorldPosition.normalize().multiplyScalar(value));
 }
 
-function down() {
-    const cameraWorldPosition = new THREE.Vector3();
-    camera.getWorldPosition(cameraWorldPosition);
 
-    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
-    let cube = new THREE.Mesh(geometry, material);
-    camera.add(cube);
-
-    cube.position.y += 1;
-
-    const upCameraWorldPosition = new THREE.Vector3();
-    cube.getWorldPosition(upCameraWorldPosition);
-    upCameraWorldPosition.sub(cameraWorldPosition);
-    currentObject.translateOnAxis(upCameraWorldPosition, -1);
-}
-
-function left() {
-    const cameraWorldPosition = new THREE.Vector3();
-    camera.getWorldPosition(cameraWorldPosition);
-
-    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
-    let cube = new THREE.Mesh(geometry, material);
-    camera.add(cube);
-
-    cube.position.x += 1;
-
-    const upCameraWorldPosition = new THREE.Vector3();
-    cube.getWorldPosition(upCameraWorldPosition);
-    upCameraWorldPosition.sub(cameraWorldPosition);
-    currentObject.translateOnAxis(upCameraWorldPosition, -1);
-}
-
-function right() {
-    const cameraWorldPosition = new THREE.Vector3();
-    camera.getWorldPosition(cameraWorldPosition);
-
-    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
-    let cube = new THREE.Mesh(geometry, material);
-    camera.add(cube);
-
-    cube.position.x += 1;
-
-    const upCameraWorldPosition = new THREE.Vector3();
-    cube.getWorldPosition(upCameraWorldPosition);
-    upCameraWorldPosition.sub(cameraWorldPosition);
-    currentObject.translateOnAxis(upCameraWorldPosition, 1);
-}
 
 // rotate the selected object 45 degrees on the axis vector between the camera and the object.
 function rotate(event) {
@@ -248,7 +219,6 @@ function removeAll() {
     }
 }
 
-
 function removeSelected() {
     if (currentObject) {
         const index = coloredMeshes.indexOf(currentObject);
@@ -264,21 +234,20 @@ function removeSelected() {
 
 
 // function to determine if it's a left or right click
-function isRightClick(e) {
+function isRightClick(event) {
     let isRightMB;
-    e = e || window.event;
+    event = event || window.event;
 
-    if ("which" in e)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-        isRightMB = e.which == 3;
+    if ("which" in event)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+        isRightMB = event.which == 3;
     else if ("button" in e)  // IE, Opera 
-        isRightMB = e.button == 2;
-
+        isRightMB = event.button == 2;
     return isRightMB;
 }
 
 function resetHighlights() {
     scene.traverse((obj) => {
-        if (obj && obj.type === "Mesh" && obj.material && obj.material.type === "MeshLambertMaterial") {
+        if (obj && obj.type === "Mesh" && obj.material && obj.material.type === "MeshLambertMaterial" & !isTranslating) {
             obj.material.emissive = new THREE.Color(0x000000);
         }
     });
@@ -337,7 +306,7 @@ function onMouseMove(event) {
         camera.rotation.x += THREE.MathUtils.degToRad(diff.y * 40);
         camera.rotation.y -= THREE.MathUtils.degToRad(diff.x * 40);
         mouseDownPos.copy(mouse);
-    } else if (isMouseDown && !isRightClick(event)) {
+    } else if (isMouseDown && !isRightClick(event) && !isTranslating) {
         let diff = mouseDownPos.sub(mouse);
         camera.position.x += diff.x * 20;
         camera.position.z -= diff.y * 20;
