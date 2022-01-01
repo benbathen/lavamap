@@ -1,23 +1,48 @@
 
+
+
+
 let currentObject = null;
 const mouseDownPos = new THREE.Vector2(0, 0);
 let isMouseDown = false;
+let isTranslating = false;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 24, 0);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
-coloredMeshes = new Array();
+const coloredMeshes = new Array();
 
 const renderer = new THREE.WebGLRenderer();
 document.getElementsByClassName("flex-container")[0].appendChild(renderer.domElement);
 
 const raycaster = new THREE.Raycaster();
 
-renderer.domElement.style.flex = 3;
-renderer.domElement.addEventListener("mousedown", onMouseDown);
-renderer.domElement.addEventListener('wheel', (event) => { camera.position.y += event.deltaY / 40; console.log(camera.position.z); });
-renderer.domElement.addEventListener('mousemove', onMouseMove);
-renderer.domElement.addEventListener('mouseup', onMouseUp);
+function addEventListeners() {
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener('wheel', (event) => { camera.position.y += event.deltaY / 40; });
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('keydown', handleKey);
+    document.getElementById("translateBtn").addEventListener('click', translate);
+    document.getElementById("up").addEventListener('click', up);
+    document.getElementById("down").addEventListener('click', down);
+    document.getElementById("left").addEventListener('click', left);
+    document.getElementById("right").addEventListener('click', right);
+    document.getElementById("rotateForwardBtn").addEventListener('click', rotate);
+    document.getElementById("rotateBackBtn").addEventListener('click', rotate);
+}
+addEventListeners();
+
+function handleKey(event) {
+    switch (event.code) {
+        case 'Delete':
+            removeSelected();
+            break;
+        default:
+            console.log("pressed " + event.code);
+
+    }
+}
 
 
 const size = 24;
@@ -58,44 +83,147 @@ function animate() {
 animate();
 
 
-function createObject(type, intersectPoint) {
+function createObject(objectType, intersectPoint) {
     let geometry = new THREE.CylinderGeometry(5, 5, 20, 32);
     let material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
     let cylinder = new THREE.Mesh(geometry, material);
     let cube = new THREE.Mesh(geometry, material);
     let cone = new THREE.Mesh(geometry, material);
 
-    switch (type.value) {
+    switch (objectType.value) {
         case "redCylinder":
             geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
             material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
             cylinder = new THREE.Mesh(geometry, material);
             coloredMeshes.push(cylinder);
-            currentObject = cylinder;
             scene.add(cylinder);
             cylinder.position.copy(intersectPoint);
-            break;
+            return cylinder;
         case "blueBox":
             geometry = new THREE.BoxGeometry(1, 1, 1);
             material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
             let cube = new THREE.Mesh(geometry, material);
-            currentObject = cube;
             coloredMeshes.push(cube);
             scene.add(cube);
             cube.position.copy(intersectPoint);
-            break;
+            return cube;
         case "yellowCone":
             geometry = new THREE.ConeGeometry(0.5, 1, 24);
             material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
             let cone = new THREE.Mesh(geometry, material);
             cone.position.y += 0.5;
-            currentObject = cone;
             coloredMeshes.push(cone);
             scene.add(cone);
             cone.position.copy(intersectPoint);
-            break;
+            return cone;
         default:
             console.log('invalid geometry type');
+    }
+}
+
+function getAxisToObject(){
+    const currentObjectWorldPosition = new THREE.Vector3();
+    const cameraWorldPosition = new THREE.Vector3();
+    currentObject.getWorldPosition(currentObjectWorldPosition);
+    camera.getWorldPosition(cameraWorldPosition);
+    return currentObjectWorldPosition.sub(cameraWorldPosition).normalize();
+}
+
+function translate() {
+    if (currentObject !== undefined) {
+        const objects = [currentObject];
+        const dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
+        document.body.style.cursor = 'move';
+        dragControls.addEventListener( 'dragstart', ( event ) => {
+            event.object.material.emissive.set( 0x00FF00 );
+        } );
+        dragControls.addEventListener('dragend', (event) => {
+            dragControls.deactivate();
+            addEventListeners();
+            event.object.material.emissive.set(0x000000);
+        });
+    } else {
+        alert("select an object to traslate first");
+    }
+}
+
+function up() {
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+
+    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
+    let cube = new THREE.Mesh(geometry, material);
+    camera.add(cube);
+
+    cube.position.y += 1;
+
+    const upCameraWorldPosition = new THREE.Vector3();
+    cube.getWorldPosition(upCameraWorldPosition);
+    upCameraWorldPosition.sub(cameraWorldPosition);
+    currentObject.translateOnAxis(upCameraWorldPosition, 1);
+}
+
+function down() {
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+
+    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
+    let cube = new THREE.Mesh(geometry, material);
+    camera.add(cube);
+
+    cube.position.y += 1;
+
+    const upCameraWorldPosition = new THREE.Vector3();
+    cube.getWorldPosition(upCameraWorldPosition);
+    upCameraWorldPosition.sub(cameraWorldPosition);
+    currentObject.translateOnAxis(upCameraWorldPosition, -1);
+}
+
+function left() {
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+
+    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
+    let cube = new THREE.Mesh(geometry, material);
+    camera.add(cube);
+
+    cube.position.x += 1;
+
+    const upCameraWorldPosition = new THREE.Vector3();
+    cube.getWorldPosition(upCameraWorldPosition);
+    upCameraWorldPosition.sub(cameraWorldPosition);
+    currentObject.translateOnAxis(upCameraWorldPosition, -1);
+}
+
+function right() {
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+
+    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
+    let cube = new THREE.Mesh(geometry, material);
+    camera.add(cube);
+
+    cube.position.x += 1;
+
+    const upCameraWorldPosition = new THREE.Vector3();
+    cube.getWorldPosition(upCameraWorldPosition);
+    upCameraWorldPosition.sub(cameraWorldPosition);
+    currentObject.translateOnAxis(upCameraWorldPosition, 1);
+}
+
+// rotate the selected object 45 degrees on the axis vector between the camera and the object.
+function rotate(event) {
+    if (currentObject !== undefined) {
+        const axisVec = getAxisToObject();
+        let angle = 45;
+        if(event.target.id === "rotateBackBtn"){ angle *= -1; }
+        currentObject.rotateOnWorldAxis( axisVec, THREE.MathUtils.degToRad(angle) );
+    } else {
+        alert("select an object to rotate first");
     }
 }
 
@@ -107,19 +235,26 @@ function removeAll() {
         if (obj.type == 'Mesh' && obj !== gridHelper) {
             scene.remove(obj);
         }
+        currentObject = undefined;
     }
 }
 
+
 function removeSelected() {
     if (currentObject) {
+        const index = coloredMeshes.indexOf(currentObject);
+        coloredMeshes.splice(index, 1);
         scene.remove(currentObject);
-    }else{
-        if( coloredMeshes.length ){
-            scene.remove(coloredMeshes.pop());
+    } else {
+        if (coloredMeshes.length) {
+            const last = coloredMeshes.pop();
+            scene.remove(last);
         }
     }
 }
 
+
+// function to determine if it's a left or right click
 function isRightClick(e) {
     let isRightMB;
     e = e || window.event;
@@ -132,10 +267,15 @@ function isRightClick(e) {
     return isRightMB;
 }
 
-function resetHighlights(){
-    scene.traverse((obj) =>  {if (obj.type === "Mesh") { obj.material.emissive = new THREE.Color(0x000000); } });
+function resetHighlights() {
+    scene.traverse((obj) => {
+        if (obj && obj.type === "Mesh" && obj.material && obj.material.type === "MeshLambertMaterial") {
+            obj.material.emissive = new THREE.Color(0x000000);
+        }
+    });
 }
 
+// event handler for the mouse down 
 function onMouseDown(event) {
     isMouseDown = true;
     resetHighlights();
@@ -155,18 +295,27 @@ function onMouseDown(event) {
         if (intersects.length === 0) {
             mouseDownPos.copy(mouse);
         } else {
-            if (intersects[0].object === gridHelper) {
-                createObject(document.getElementById("typeDropdown"), intersects[0].point);
-            } else if (intersects[0].object.type = "Mesh") {
-                currentObject = intersects[0].object;
-                currentObject.material.emissive = new THREE.Color(0x00FF00);
+            const meshIndex = intersects.findIndex(item => item.object.type === "Mesh");
+            // if you hit an object highlight it so the user knows it's selected
+            if (meshIndex !== -1) {
+                currentObject = intersects[meshIndex].object;
+                if (currentObject &&
+                    currentObject.material &&
+                    currentObject.type === "Mesh" &&
+                    currentObject.material.type === "MeshLambertMaterial") {
+                    currentObject.material.emissive = new THREE.Color(0x00FF00);
+                }
+
+            } else if (intersects.findIndex(item => item.object.type === "GridHelper") !== -1) {
+                currentObject = createObject(document.getElementById("typeDropdown"), intersects[0].point);
             }
         }
-    } else if (isRightClick(event)) {
+    } else {
         mouseDownPos.copy(mouse);
     }
 }
 
+//event handler for the mouse move
 function onMouseMove(event) {
     const mouse = new THREE.Vector2(0, 0);
     // Get screen-space x/y
@@ -174,19 +323,24 @@ function onMouseMove(event) {
     mouse.x = ((event.clientX - rect.left) / renderer.domElement.clientWidth) * 2 - 1;
     mouse.y = - ((event.clientY - rect.top) / renderer.domElement.clientHeight) * 2 + 1;
 
-    if (isMouseDown == true && isRightClick(event)) {
+    if (isMouseDown && isRightClick(event)) {
         let diff = mouseDownPos.sub(mouse);
         camera.rotation.x += THREE.MathUtils.degToRad(diff.y * 40);
         camera.rotation.y -= THREE.MathUtils.degToRad(diff.x * 40);
         mouseDownPos.copy(mouse);
-    } else if (isMouseDown == true && !isRightClick(event)) {
+    } else if (isMouseDown && !isRightClick(event)) {
         let diff = mouseDownPos.sub(mouse);
         camera.position.x += diff.x * 20;
         camera.position.z -= diff.y * 20;
         mouseDownPos.copy(mouse);
+    } else if (isMouseDown && isTranslating) {
+        currentObject.position
     }
+
 }
 
 function onMouseUp(event) {
     isMouseDown = false;
 }
+
+
