@@ -29,22 +29,25 @@
                 <option value="blueBox">Blue Cube</option>
                 <option value="yellowCone">Yellow Cone</option>
             </select>
-            <button class="btn" onclick="removeAll()">REMOVE ALL</button>
-            <button class="btn" onclick="removeSelected()">REMOVE SELECTED</button>
+            <input type="image" src="images/deleteAll.png" class="btn" onclick="removeAll()"
+                title="delete all"></button>
+            <input type="image" src="images/delete.png" class="btn" onclick="removeSelected()" title="delete"></button>
+            <input type="image" src="images/up.jpg" id="up" class="btn" title="move up"></button>
+            <input type="image" src="images/down.jpg" id="down" class="btn" title="move down"></button>
+            <input type="image" src="images/left.jpg" id="left" class="btn" title="move left"></button>
+            <input type="image" src="images/right.jpg" id="right" class="btn" title="move right"></button>
+            <input type="image" src="images/rotateforward.jpg" id="rotateForwardBtn" class="btn"
+                title="rotate forward"></button>
+            <input type="image" src="images/rotateback.jpg" id="rotateBackBtn" class="btn" title="rotate back"></button>
 
-            <input type="image" src="images/translate.jpg" id="translateBtn" class="btn"></button>
-            <input type="image" src="images/up.jpg" id="up" class="btn"></button>
-            <input type="image" src="images/right.jpg" id="right" class="btn"></button>
-            <input type="image" src="images/left.jpg" id="left" class="btn"></button>
-            <input type="image" src="images/down.jpg" id="down" class="btn"></button>
-            <input type="image" src="images/rotateforward.jpg" id="rotateForwardBtn" class="btn"></button>
-            <input type="image" src="images/rotateback.jpg" id="rotateBackBtn" class="btn"></button>
+            <input type="image" src="images/translate.jpg" id="translateBtn" class="btn" title="free translate (drag)"></button>
         </div>
         <!–– Canvas element gets appended here -->
     </div>
+    <img src="images/lavamap_logo_200_50.svg" class="logo"></img>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128/build/three.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/DragControls.js"></script>
-    <script  src="bathenTest.js"></script>
+    <script src="bathenTest.js"></script>
 </body>
 
 </html>

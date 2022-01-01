@@ -7,17 +7,19 @@
     height: 100vh;
   }
   
-  .flex-container > div {
-    margin: 10px;
+  .flex-container > * {
+    margin: 1px;
     align-items: stretch;
   }
 
   .grid-container {
     display: grid;
     grid-template-columns: auto auto;
-    grid-gap: 1px;
+    grid-gap: 5px;
     background-color: #202427a9;
     padding: 5px;
+    flex-grow: 2;
+    height: 70vh;
   }
 
   .item1 {
@@ -27,6 +29,7 @@
   .btn {
     width: 4vw;
     height: 4vw;
+    padding: 2px;
     border-style: solid;
     border-width: 1px;
     border-color: #bbb #aaa #999;
@@ -34,7 +37,7 @@
     background: #ccc;
     color: #333;
     font-family: 'Lucida Grande';
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
     text-decoration: none;
     -webkit-border-radius: 5px;
@@ -42,9 +45,20 @@
   }
 
   .dropDown{
-    
+      height: 5vh;
+  }
+
+  canvas{
+    flex-grow: 8;
   }
 
   #translateBtn{
     cursor: move;
+  }
+
+  .logo{
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 10%;
   }

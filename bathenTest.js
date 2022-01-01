@@ -38,6 +38,15 @@ function handleKey(event) {
         case 'Delete':
             removeSelected();
             break;
+        case 'F':
+            if (currentObject) {
+                const targetPos = new THREE.Vector3();
+                currentObject.getWorldPosition(targetPos);
+                targetPos.y += 5;
+                camera.position.copy(targetPos);
+                camera.lookAt(currentObject.position);
+            }
+            break;
         default:
             console.log("pressed " + event.code);
 
@@ -121,7 +130,7 @@ function createObject(objectType, intersectPoint) {
     }
 }
 
-function getAxisToObject(){
+function getAxisToObject() {
     const currentObjectWorldPosition = new THREE.Vector3();
     const cameraWorldPosition = new THREE.Vector3();
     currentObject.getWorldPosition(currentObjectWorldPosition);
@@ -134,9 +143,9 @@ function translate() {
         const objects = [currentObject];
         const dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
         document.body.style.cursor = 'move';
-        dragControls.addEventListener( 'dragstart', ( event ) => {
-            event.object.material.emissive.set( 0x00FF00 );
-        } );
+        dragControls.addEventListener('dragstart', (event) => {
+            event.object.material.emissive.set(0x00FF00);
+        });
         dragControls.addEventListener('dragend', (event) => {
             dragControls.deactivate();
             addEventListeners();
@@ -220,8 +229,8 @@ function rotate(event) {
     if (currentObject !== undefined) {
         const axisVec = getAxisToObject();
         let angle = 45;
-        if(event.target.id === "rotateBackBtn"){ angle *= -1; }
-        currentObject.rotateOnWorldAxis( axisVec, THREE.MathUtils.degToRad(angle) );
+        if (event.target.id === "rotateBackBtn") { angle *= -1; }
+        currentObject.rotateOnWorldAxis(axisVec, THREE.MathUtils.degToRad(angle));
     } else {
         alert("select an object to rotate first");
     }
