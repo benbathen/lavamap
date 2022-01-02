@@ -11,7 +11,7 @@ camera.lookAt(new THREE.Vector3(0, 0, 0));
 const coloredMeshes = new Array();
 
 const renderer = new THREE.WebGLRenderer({ alpha: true });
-scene.background = new THREE.Color( 0x384C55 );
+scene.background = new THREE.Color(0x384C55);
 document.getElementsByClassName("flex-container")[0].appendChild(renderer.domElement);
 
 const raycaster = new THREE.Raycaster();
@@ -29,6 +29,7 @@ function addEventListeners() {
     document.getElementById("right").addEventListener('click', move);
     document.getElementById("rotateForwardBtn").addEventListener('click', rotate);
     document.getElementById("rotateBackBtn").addEventListener('click', rotate);
+    document.getElementById("randBtn").addEventListener('click', generateRandomObjects);
 }
 addEventListeners();
 
@@ -100,7 +101,9 @@ function createObject(objectType, intersectPoint) {
     let cube = new THREE.Mesh(geometry, material);
     let cone = new THREE.Mesh(geometry, material);
 
-    switch (objectType.value) {
+    switch (objectType) {
+        case "redCylinder":
+            break;
         case "redCylinder":
             geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
             material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
@@ -140,8 +143,6 @@ function getAxisToObject() {
 }
 
 function translate() {
-    if (currentObject !== undefined) {
-        const objects = [currentObject];
         const dragControls = new THREE.DragControls(coloredMeshes, camera, renderer.domElement);
         document.body.style.cursor = 'move';
         dragControls.addEventListener('dragstart', (event) => {
@@ -152,9 +153,6 @@ function translate() {
             addEventListeners();
             event.object.material.emissive.set(0x000000);
         });
-    } else {
-        alert("select an object to traslate first");
-    }
 }
 
 function move(event) {
@@ -285,7 +283,7 @@ function onMouseDown(event) {
                 }
 
             } else if (intersects.findIndex(item => item.object.type === "GridHelper") !== -1) {
-                currentObject = createObject(document.getElementById("typeDropdown"), intersects[0].point);
+                currentObject = createObject(document.getElementById("typeDropdown").value, intersects[0].point);
             }
         }
     } else {
@@ -319,6 +317,20 @@ function onMouseMove(event) {
 
 function onMouseUp(event) {
     isMouseDown = false;
+}
+
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function generateRandomObjects() {
+    const objectTypes = ["redCylinder", "blueBox", "yellowCone"];
+    for (let i = 0; i < 100; i++) {
+        console.log(Math.floor(Math.random() * objectTypes.length));
+        const limit = 12;
+        const randVec = new THREE.Vector3(getRandomArbitrary(-limit, limit), 0, getRandomArbitrary(-limit, limit) );
+        const obj = createObject(objectTypes[Math.floor(Math.random() * objectTypes.length)], randVec);
+    }
 }
 
 
