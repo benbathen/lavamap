@@ -1,5 +1,6 @@
 body{
   background-color: #aaa;
+  overflow: hidden;
 }
 
 .flex-container {

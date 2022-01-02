@@ -326,7 +326,6 @@ function getRandomArbitrary(min, max) {
 function generateRandomObjects() {
     const objectTypes = ["redCylinder", "blueBox", "yellowCone"];
     for (let i = 0; i < 100; i++) {
-        console.log(Math.floor(Math.random() * objectTypes.length));
         const limit = 12;
         const randVec = new THREE.Vector3(getRandomArbitrary(-limit, limit), 0, getRandomArbitrary(-limit, limit) );
         const obj = createObject(objectTypes[Math.floor(Math.random() * objectTypes.length)], randVec);
