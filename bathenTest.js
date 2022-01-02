@@ -104,7 +104,7 @@ function createObject(objectType, intersectPoint) {
     let cone = new THREE.Mesh(geometry, material);
 
     switch (objectType) {
-        case "redCylinder":
+        case undefined:
             break;
         case "redCylinder":
             geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
@@ -180,17 +180,21 @@ function move(event) {
             break;
 
     }
-    const cameraWorldPosition = new THREE.Vector3();
-    camera.getWorldPosition(cameraWorldPosition);
-    geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-    material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
-    let cube = new THREE.Mesh(geometry, material);
-    camera.add(cube);
-    cube.position[axis] += 1;
-    const upCameraWorldPosition = new THREE.Vector3();
-    cube.getWorldPosition(upCameraWorldPosition);
-    upCameraWorldPosition.sub(cameraWorldPosition);
-    currentObject.position.add(upCameraWorldPosition.normalize().multiplyScalar(value));
+    if(space === "screen"){
+        const cameraWorldPosition = new THREE.Vector3();
+        camera.getWorldPosition(cameraWorldPosition);
+        geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        material = new THREE.MeshLambertMaterial({ color: 0x0000ff });
+        let cube = new THREE.Mesh(geometry, material);
+        camera.add(cube);
+        cube.position[axis] += 1;
+        const upCameraWorldPosition = new THREE.Vector3();
+        cube.getWorldPosition(upCameraWorldPosition);
+        upCameraWorldPosition.sub(cameraWorldPosition);
+        currentObject.position.add(upCameraWorldPosition.normalize().multiplyScalar(value));
+    }else if(space === "local"){
+        currentObject.position[axis] += value;
+    }
 }
 
 
