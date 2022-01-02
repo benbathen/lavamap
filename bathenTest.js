@@ -99,9 +99,6 @@ animate();
 function createObject(objectType, intersectPoint) {
     let geometry = new THREE.CylinderGeometry(5, 5, 20, 32);
     let material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
-    let cylinder = new THREE.Mesh(geometry, material);
-    let cube = new THREE.Mesh(geometry, material);
-    let cone = new THREE.Mesh(geometry, material);
 
     switch (objectType) {
         case undefined:
@@ -109,7 +106,7 @@ function createObject(objectType, intersectPoint) {
         case "redCylinder":
             geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
             material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
-            cylinder = new THREE.Mesh(geometry, material);
+            let cylinder = new THREE.Mesh(geometry, material);
             coloredMeshes.push(cylinder);
             scene.add(cylinder);
             cylinder.position.copy(intersectPoint);
