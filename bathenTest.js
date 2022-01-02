@@ -9,6 +9,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 camera.position.set(0, 24, 0);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 const coloredMeshes = new Array();
+let space = "local";
 
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 scene.background = new THREE.Color(0x384C55);
@@ -30,6 +31,7 @@ function addEventListeners() {
     document.getElementById("rotateForwardBtn").addEventListener('click', rotate);
     document.getElementById("rotateBackBtn").addEventListener('click', rotate);
     document.getElementById("randBtn").addEventListener('click', generateRandomObjects);
+    document.getElementById("spaceDropdown").addEventListener('click', setSpace);
 }
 addEventListeners();
 
@@ -195,11 +197,15 @@ function move(event) {
 
 // rotate the selected object 45 degrees on the axis vector between the camera and the object.
 function rotate(event) {
-    if (currentObject !== undefined) {
+    if (currentObject !== undefined && space === "screen") {
         const axisVec = getAxisToObject();
         let angle = 45;
         if (event.target.id === "rotateBackBtn") { angle *= -1; }
         currentObject.rotateOnWorldAxis(axisVec, THREE.MathUtils.degToRad(angle));
+    }else if(currentObject !== undefined && space === "local"){
+        let angle = 45;
+        if (event.target.id === "rotateBackBtn") { angle *= -1; }
+        currentObject.rotation.y += angle;
     } else {
         alert("select an object to rotate first");
     }
@@ -330,6 +336,11 @@ function generateRandomObjects() {
         const randVec = new THREE.Vector3(getRandomArbitrary(-limit, limit), 0, getRandomArbitrary(-limit, limit) );
         const obj = createObject(objectTypes[Math.floor(Math.random() * objectTypes.length)], randVec);
     }
+}
+
+function setSpace(event){
+        console.log(event.srcElement.value);
+        space = event.srcElement.value;
 }
 
 

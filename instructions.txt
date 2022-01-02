@@ -33,7 +33,9 @@ The panel should contain a dropdown that lists some options to create colored pr
 
 The object should then be created where the user clicks on the grid.
 
-The panel should have buttons to translate the object as well as rotate it (45 degrees) Note: the translate buttons should always move the objects relative to the screen. For example the up button should move the object toward the top of the screen even after the camera has been rotated. 
+The panel should have buttons to translate the object as well as rotate it (45 degrees) 
+Note: the translate buttons should always move the objects relative to the screen. 
+For example the up button should move the object toward the top of the screen even after the camera has been rotated. 
 
 There should be a remove button to remove the current object, thus making the previously created object the new current object.
 
